@@ -1,0 +1,37 @@
+{
+  "name": "solana-agent-treasury",
+  "version": "1.0.0",
+  "description": "Autonomous Kamino Lending Yield & Jupiter Dip-Guard for AI Agents on Solana",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "test": "tsc && node --test dist/__tests__/*.test.js",
+    "demo": "tsc && node dist/cli.js",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "solana",
+    "ai-agents",
+    "treasury",
+    "kamino",
+    "jupiter",
+    "defi",
+    "yield",
+    "dip-trader",
+    "colosseum"
+  ],
+  "author": "Solana Autonomous Systems",
+  "license": "MIT",
+  "dependencies": {
+    "@solana/spl-token": "^0.4.9",
+    "@solana/web3.js": "^1.95.8",
+    "decimal.js": "^10.4.3",
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2"
+  }
+}
