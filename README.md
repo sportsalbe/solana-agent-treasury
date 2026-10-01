@@ -4,7 +4,7 @@
 [![Solana](https://img.shields.io/badge/Solana-DeFi-purple.svg)](https://solana.com)
 [![Kamino Lending](https://img.shields.io/badge/Kamino-Lending_Yield-blue.svg)](https://kamino.finance)
 [![Jupiter](https://img.shields.io/badge/Jupiter-DEX_Aggregator-green.svg)](https://jup.ag)
-[![Colosseum Hackathon](https://img.shields.io/badge/Colosseum-Ready-orange.svg)](https://arena.colosseum.org)
+[![Colosseum Hackathon](https://img.shields.io/badge/Colosseum-Ready-orange.svg)](https://sportsalbe.github.io/solana-agent-treasury)
 
 > **Autonomous Kamino Lending Yield & Jupiter Dip-Guard for AI Agents on Solana.**  
 > Built for the **Road to Colosseum Hackathon (Superteam Germany)**.
