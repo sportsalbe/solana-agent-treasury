@@ -31,107 +31,168 @@ function initChartData() {
   STATE.chartData[points - 1] = TOKEN_CONFIG.SOL.price;
 }
 
-// 2. Render Live Canvas Chart with Dynamic Visual Zones & Agent Bands
+// 2. High-DPI Perfect Fit Canvas Chart with Y-Axis & Dynamic Agent Bands
+function resizeCanvas() {
+  if (!chartCanvas) return;
+  const rect = chartCanvas.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 2;
+  chartCanvas.width = rect.width * dpr;
+  chartCanvas.height = rect.height * dpr;
+  ctx = chartCanvas.getContext('2d');
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.scale(dpr, dpr);
+}
+
 function renderChart() {
   if (!chartCanvas || !ctx) return;
-  const w = chartCanvas.width;
-  const h = chartCanvas.height;
+  const rect = chartCanvas.getBoundingClientRect();
+  const w = rect.width;
+  const h = rect.height;
 
   ctx.clearRect(0, 0, w, h);
 
   const data = STATE.chartData;
-  if (data.length < 2) return;
+  if (!data || data.length < 2) return;
 
-  const min = Math.min(...data, 88) * 0.98;
+  // Chart Margins for Y-Axis on right
+  const marginRight = 65;
+  const chartW = w - marginRight;
+  const chartH = h - 40;
+  const topPad = 20;
+
+  // Price range bounds
+  const min = Math.min(...data, 85) * 0.98;
   const max = Math.max(...data, 148) * 1.02;
 
-  // Grid Lines
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+  // Y-Axis Horizontal Grid Lines and Labels
+  const gridSteps = 5;
+  ctx.save();
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
   ctx.lineWidth = 1;
-  for (let i = 1; i <= 4; i++) {
-    const y = (h / 5) * i;
+  ctx.fillStyle = '#64748B';
+  ctx.font = '11px JetBrains Mono, monospace';
+  ctx.textAlign = 'left';
+
+  for (let i = 0; i <= gridSteps; i++) {
+    const y = topPad + (chartH / gridSteps) * i;
+    const priceVal = max - ((max - min) / gridSteps) * i;
+
+    // Line
     ctx.beginPath();
     ctx.moveTo(0, y);
-    ctx.lineTo(w, y);
+    ctx.lineTo(chartW, y);
     ctx.stroke();
-  }
 
-  // Draw Visual Shaded Dip Zone (Under $110 / -7.5%)
+    // Price Label
+    ctx.fillText('$' + priceVal.toFixed(0), chartW + 10, y + 4);
+  }
+  ctx.restore();
+
+  // Draw Shaded Dip Zone (Under $110 / -7.5%)
   const dipThresholdPrice = TOKEN_CONFIG.SOL.baseline * 0.925; // ~$110.5
-  const dipY = h - ((dipThresholdPrice - min) / (max - min)) * (h - 40) - 20;
-  ctx.fillStyle = 'rgba(239, 68, 68, 0.06)';
-  ctx.fillRect(0, dipY, w, h - dipY);
+  const dipY = topPad + chartH - ((dipThresholdPrice - min) / (max - min)) * chartH;
+  if (dipY < h) {
+    ctx.fillStyle = 'rgba(239, 68, 68, 0.07)';
+    ctx.fillRect(0, dipY, chartW, h - dipY);
 
-  ctx.fillStyle = 'rgba(239, 68, 68, 0.4)';
-  ctx.font = '10px JetBrains Mono, monospace';
-  ctx.fillText('⚡ OVERSOLD DIP BUY ZONE (< -7.5%)', 20, h - 14);
-
-  // Draw Price Line & Gradient Area
-  ctx.beginPath();
-  const step = w / (data.length - 1);
-  for (let i = 0; i < data.length; i++) {
-    const x = i * step;
-    const y = h - ((data[i] - min) / (max - min)) * (h - 40) - 20;
-    if (i === 0) ctx.moveTo(x, y);
-    else ctx.lineTo(x, y);
+    ctx.save();
+    ctx.fillStyle = 'rgba(239, 68, 68, 0.6)';
+    ctx.font = '11px JetBrains Mono, monospace';
+    ctx.fillText('⚡ OVERSOLD DIP BUY ZONE (< -7.5%)', 20, h - 14);
+    ctx.restore();
   }
 
+  // Draw Price Line with Smooth Curves
+  const step = chartW / (data.length - 1);
   const curPrice = data[data.length - 1];
   const isDip = curPrice <= dipThresholdPrice;
+
+  ctx.save();
+  ctx.beginPath();
+  for (let i = 0; i < data.length; i++) {
+    const x = i * step;
+    const y = topPad + chartH - ((data[i] - min) / (max - min)) * chartH;
+    if (i === 0) ctx.moveTo(x, y);
+    else {
+      // Smooth cubic bezier
+      const prevX = (i - 1) * step;
+      const prevY = topPad + chartH - ((data[i - 1] - min) / (max - min)) * chartH;
+      const midX = (prevX + x) / 2;
+      ctx.bezierCurveTo(midX, prevY, midX, y, x, y);
+    }
+  }
+
+  // Neon Stroke with Glow
+  ctx.strokeStyle = isDip ? '#EF4444' : '#14F195';
+  ctx.lineWidth = 3;
+  ctx.shadowColor = isDip ? 'rgba(239, 68, 68, 0.6)' : 'rgba(20, 241, 149, 0.6)';
+  ctx.shadowBlur = 12;
+  ctx.stroke();
+
+  // Area Fill
+  const lastX = chartW;
+  const lastY = topPad + chartH - ((curPrice - min) / (max - min)) * chartH;
+  ctx.lineTo(lastX, h);
+  ctx.lineTo(0, h);
+  ctx.closePath();
 
   const gradient = ctx.createLinearGradient(0, 0, 0, h);
   if (isDip) {
     gradient.addColorStop(0, 'rgba(239, 68, 68, 0.35)');
     gradient.addColorStop(1, 'rgba(239, 68, 68, 0.0)');
-    ctx.strokeStyle = '#EF4444';
   } else {
-    gradient.addColorStop(0, 'rgba(20, 241, 149, 0.25)');
+    gradient.addColorStop(0, 'rgba(20, 241, 149, 0.3)');
     gradient.addColorStop(1, 'rgba(20, 241, 149, 0.0)');
-    ctx.strokeStyle = '#14F195';
   }
-
-  ctx.lineWidth = 2.5;
-  ctx.stroke();
-
-  ctx.lineTo(w, h);
-  ctx.lineTo(0, h);
   ctx.fillStyle = gradient;
+  ctx.shadowBlur = 0;
   ctx.fill();
+  ctx.restore();
 
-  // Draw Dynamic Position Overlays (Entry, Trailing Stop, Take Profit)
+  // Pulse Dot on Current Price
+  ctx.save();
+  ctx.fillStyle = isDip ? '#EF4444' : '#14F195';
+  ctx.shadowColor = isDip ? '#EF4444' : '#14F195';
+  ctx.shadowBlur = 16;
+  ctx.beginPath();
+  ctx.arc(lastX, lastY, 6, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  // Draw Position Overlays (Entry, Trailing Stop, Take Profit)
   if (STATE.positions.length > 0) {
     const pos = STATE.positions[0];
     if (pos.status === 'OPEN') {
       // 1. Green Entry Line
-      drawPriceBand(pos.entryPrice, min, max, w, h, '#14F195', 'ENTRY TARGET: $' + pos.entryPrice.toFixed(2));
+      drawPriceBand(pos.entryPrice, min, max, chartW, chartH, topPad, '#14F195', 'ENTRY TARGET: $' + pos.entryPrice.toFixed(2));
 
       // 2. Dynamic Trailing Stop (-4% from Peak)
       const trailingPrice = pos.peakPrice * 0.96;
-      drawPriceBand(trailingPrice, min, max, w, h, '#C084FC', 'DYNAMIC TRAILING STOP: $' + trailingPrice.toFixed(2));
+      drawPriceBand(trailingPrice, min, max, chartW, chartH, topPad, '#C084FC', 'DYNAMIC TRAILING STOP: $' + trailingPrice.toFixed(2));
 
       // 3. Take Profit Line (+10%)
       const tpPrice = pos.entryPrice * 1.10;
-      drawPriceBand(tpPrice, min, max, w, h, '#FBBF24', 'TAKE PROFIT TARGET (+10%): $' + tpPrice.toFixed(2));
+      drawPriceBand(tpPrice, min, max, chartW, chartH, topPad, '#FBBF24', 'TAKE PROFIT TARGET (+10%): $' + tpPrice.toFixed(2));
     }
   }
 }
 
-function drawPriceBand(priceVal, min, max, w, h, color, label) {
+function drawPriceBand(priceVal, min, max, chartW, chartH, topPad, color, label) {
   if (priceVal < min || priceVal > max) return;
-  const y = h - ((priceVal - min) / (max - min)) * (h - 40) - 20;
+  const y = topPad + chartH - ((priceVal - min) / (max - min)) * chartH;
 
   ctx.save();
   ctx.setLineDash([6, 6]);
   ctx.strokeStyle = color;
-  ctx.lineWidth = 1.5;
+  ctx.lineWidth = 1.8;
   ctx.beginPath();
   ctx.moveTo(0, y);
-  ctx.lineTo(w, y);
+  ctx.lineTo(chartW, y);
   ctx.stroke();
 
   ctx.fillStyle = color;
   ctx.font = '11px JetBrains Mono, monospace';
-  ctx.fillText(label, w - 240, y - 6);
+  ctx.fillText(label, chartW - 250, y - 6);
   ctx.restore();
 }
 
@@ -543,7 +604,9 @@ setInterval(() => {
 }, 1000);
 
 // Initialize on DOM Ready
+window.addEventListener('resize', () => { resizeCanvas(); renderChart(); });
 window.addEventListener('DOMContentLoaded', () => {
+  resizeCanvas();
   chartCanvas = document.getElementById('live-sol-chart');
   if (chartCanvas) {
     chartCanvas.width = chartCanvas.offsetWidth * 2;
