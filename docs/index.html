@@ -3,295 +3,356 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Solana Agent Treasury | Live Autonomous Guard & Dip Trader</title>
-  <meta name="description" content="Autonomous Kamino Lending Yield & Jupiter Dip-Guard for AI Agents on Solana. Built for Road to Colosseum Hackathon.">
+  <title>Solana Agent Treasury Terminal | Autonomous DeFi Guard & Dip Engine</title>
+  <meta name="description" content="Next-Gen Autonomous Treasury Protocol for AI Agents on Solana. Kamino Lending Yield, Strict Capital Guard, and Jupiter Spot Dip Engine.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <!-- Solana Web3.js CDN for live wallet connection -->
+  <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
 </head>
 <body>
-  <div class="app-container">
-    <!-- Top Navigation -->
+  <!-- Ambient Glow Canvas -->
+  <div class="glow-bg"></div>
+
+  <div class="terminal-layout">
+    <!-- Top System Telemetry Bar -->
+    <div class="telemetry-bar">
+      <div class="telemetry-left">
+        <span class="telemetry-item"><span class="status-pulse-green"></span> <strong>SOLANA MAINNET-BETA</strong></span>
+        <span class="telemetry-sep">|</span>
+        <span class="telemetry-item">SLOT: <span id="slot-counter" class="mono-num">298,412,045</span></span>
+        <span class="telemetry-sep">|</span>
+        <span class="telemetry-item">PING: <span class="mono-num text-green">22ms</span></span>
+        <span class="telemetry-sep">|</span>
+        <span class="telemetry-item">FLEET STATUS: <span class="text-mint font-bold">100% OPERATIONAL</span></span>
+      </div>
+      <div class="telemetry-right">
+        <span class="hackathon-tag">🏆 Road to Colosseum MVP — Superteam Germany</span>
+      </div>
+    </div>
+
+    <!-- Main Navigation Header -->
     <header class="app-header">
-      <div class="header-brand">
-        <div class="logo-mark">⚡</div>
-        <div class="brand-text">
-          <h1>Solana Agent Treasury</h1>
-          <span class="badge colosseum-badge">Road to Colosseum MVP</span>
+      <div class="header-left">
+        <div class="brand-badge-wrap">
+          <div class="brand-logo">⚡</div>
+          <div>
+            <div class="brand-title">
+              <h2>SOLANA AGENT TREASURY</h2>
+              <span class="version-tag">PROTOCOL v1.0</span>
+            </div>
+            <div class="brand-subtitle">Autonomous Liquidity &amp; Yield Architecture for AI Agents</div>
+          </div>
         </div>
       </div>
-      <div class="header-status">
-        <div class="network-badge">
-          <span class="pulse-dot"></span>
-          <span class="network-name">Solana Mainnet-Beta</span>
+
+      <div class="header-right">
+        <!-- Fleet TVL Pill -->
+        <div class="fleet-tvl-pill">
+          <span class="tvl-label">FLEET ASSETS</span>
+          <span class="tvl-val" id="top-fleet-tvl">$145.00 USDC</span>
+          <span class="tvl-badge">KAMINO POOLED</span>
         </div>
-        <a href="https://github.com/sportsalbe/solana-agent-treasury" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+
+        <!-- Mode Toggle & Wallet Connect -->
+        <button id="btn-connect-wallet" class="btn btn-wallet">
+          <svg class="wallet-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"></path><path d="M16 14h.01"></path><path d="M2 9V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4"></path></svg>
+          <span id="wallet-btn-text">Connect Phantom</span>
+        </button>
+
+        <a href="https://github.com/sportsalbe/solana-agent-treasury" target="_blank" rel="noopener noreferrer" class="btn btn-github">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-          GitHub Repository
+          Repo
         </a>
       </div>
     </header>
 
-    <!-- Hero Intro -->
-    <section class="hero-section">
-      <div class="hero-content">
-        <h2>Autonomous Treasury Guard &amp; Dip-Trader for AI Agents</h2>
-        <p>Solana AI Agents hold idle capital in raw wallets. This SDK vaults operating reserves into Kamino Lending to earn compounded APY, while deploying surplus capital into Jupiter dip-buying opportunities with strict Capital Guard invariants.</p>
-      </div>
-    </section>
-
-    <!-- Top Metrics Grid -->
-    <section class="metrics-grid">
-      <!-- Card 1: Kamino Vault -->
-      <div class="metric-card card-glow-purple">
-        <div class="card-header">
-          <div class="header-left">
-            <span class="icon">🏦</span>
-            <span class="title">Kamino Lending Vault</span>
+    <!-- Top KPI Grid -->
+    <div class="kpi-grid">
+      <!-- KPI 1: Kamino Vault -->
+      <div class="kpi-card glow-purple">
+        <div class="kpi-header">
+          <div class="kpi-title-wrap">
+            <span class="kpi-icon">🏦</span>
+            <span class="kpi-label">KAMINO LENDING VAULT</span>
           </div>
-          <span class="badge apy-badge">8.42% APY</span>
+          <span class="badge badge-purple">8.42% APY</span>
         </div>
-        <div class="card-value" id="val-kamino-reserve">$30.00 USDC</div>
-        <div class="card-subtext">Operating Reserve Locked in Kamino Lending</div>
-        <div class="yield-ticker-box">
-          <span class="yield-label">Realtime Yield Earned:</span>
-          <span class="yield-value" id="val-kamino-yield">+$0.000142 USDC</span>
+        <div class="kpi-number" id="kpi-kamino-total">$30.00 USDC</div>
+        <div class="kpi-detail">Operating Capital Earning Continuous Yield</div>
+        <div class="yield-ticker-row">
+          <span class="yield-pulse"></span>
+          <span>Earned Yield:</span>
+          <span class="yield-stat" id="kpi-yield-ticker">+$0.000318 USDC</span>
+          <button id="btn-harvest-yield" class="btn-micro">Harvest</button>
         </div>
       </div>
 
-      <!-- Card 2: Capital Guard Invariant -->
-      <div class="metric-card card-glow-green">
-        <div class="card-header">
-          <div class="header-left">
-            <span class="icon">🔒</span>
-            <span class="title">Strict Capital Guard</span>
+      <!-- KPI 2: Capital Guard Invariant -->
+      <div class="kpi-card glow-mint">
+        <div class="kpi-header">
+          <div class="kpi-title-wrap">
+            <span class="kpi-icon">🔒</span>
+            <span class="kpi-label">CAPITAL GUARD INVARIANT</span>
           </div>
-          <span class="badge active-badge">ACTIVE</span>
+          <span class="badge badge-mint">ENFORCED</span>
         </div>
-        <div class="card-value" id="val-guard-status">SECURED</div>
-        <div class="card-subtext">Safety Reserve Floor: <strong>$30.00 USDC</strong> (Untouchable)</div>
-        <div class="formula-box">
+        <div class="kpi-number text-mint">100% SECURED</div>
+        <div class="kpi-detail">Floor: <strong>$30.00 USDC</strong> (Mathematically Untouchable)</div>
+        <div class="math-proof-box">
           <code>Deployable = max(0, Balance - $30.00)</code>
         </div>
       </div>
 
-      <!-- Card 3: Agent Liquidity -->
-      <div class="metric-card card-glow-blue">
-        <div class="card-header">
-          <div class="header-left">
-            <span class="icon">📈</span>
-            <span class="title">Deployable Dip Capital</span>
+      <!-- KPI 3: Surplus Dip Liquidity -->
+      <div class="kpi-card glow-blue">
+        <div class="kpi-header">
+          <div class="kpi-title-wrap">
+            <span class="kpi-icon">⚡</span>
+            <span class="kpi-label">DEPLOYABLE DIP CAPITAL</span>
           </div>
-          <span class="badge blue-badge">SURPLUS</span>
+          <span class="badge badge-blue">SURPLUS ONLY</span>
         </div>
-        <div class="card-value" id="val-deployable">$12.00 USDC</div>
-        <div class="card-subtext">Total Agent Balance: <span id="val-total-balance">$42.00 USDC</span></div>
-        <div class="balance-slider-box">
-          <label for="balance-slider">Simulate Agent Balance:</label>
-          <input type="range" id="balance-slider" min="20" max="100" value="42" step="1">
-          <span id="slider-display">$42.00</span>
+        <div class="kpi-number text-blue" id="kpi-deployable-val">$12.00 USDC</div>
+        <div class="kpi-detail">Agent Balance: <span id="kpi-agent-total">$42.00 USDC</span></div>
+        <div class="slider-control-row">
+          <label>Agent Balance Sim:</label>
+          <input type="range" id="agent-balance-slider" min="20" max="100" value="42" step="1">
+          <span class="slider-badge" id="slider-val-badge">$42.00</span>
         </div>
       </div>
-    </section>
+    </div>
 
-    <!-- Live Market Scanner -->
-    <section class="scanner-section">
-      <div class="section-header">
-        <div class="section-title-wrap">
-          <span class="section-icon">📡</span>
-          <h3>Live Solana Token Dip Scanner</h3>
-          <span class="live-indicator">LIVE FEED</span>
+    <!-- Center Stage: Chart & AI Cognition Engine -->
+    <div class="main-dashboard-grid">
+      <!-- Left Column: Live Visual Trading Terminal -->
+      <div class="panel-card chart-panel">
+        <div class="panel-header">
+          <div class="panel-title-group">
+            <span class="panel-icon">📈</span>
+            <h3>SOL / USDC Real-Time Execution Chart</h3>
+            <span class="live-pill"><span class="pulse-dot"></span> LIVE DEX</span>
+          </div>
+          <div class="chart-indicators">
+            <span class="indicator-tag">SOL: <strong id="chart-price-display">$119.50</strong></span>
+            <span class="indicator-tag">RSI(14): <strong id="chart-rsi-display">48.2</strong></span>
+            <span class="indicator-tag">24h: <strong id="chart-change-display" class="text-green">+0.85%</strong></span>
+          </div>
         </div>
-        <span class="last-updated" id="last-updated-text">Updating via Solana Mainnet...</span>
+
+        <!-- The Live HTML5 Canvas Chart -->
+        <div class="canvas-container">
+          <canvas id="live-sol-chart" width="800" height="340"></canvas>
+          <!-- Dynamic Overlay Legend -->
+          <div class="chart-legend-overlay">
+            <div class="legend-item"><span class="legend-line line-green"></span> Entry Target</div>
+            <div class="legend-item"><span class="legend-line line-purple"></span> Dynamic Trailing Stop (-4%)</div>
+            <div class="legend-item"><span class="legend-line line-gold"></span> Take Profit (+10%)</div>
+          </div>
+        </div>
+
+        <!-- Chart Quick Action Bar -->
+        <div class="chart-actions-bar">
+          <div class="action-info">
+            <span class="action-status-dot green"></span>
+            <span>Autonomous Dip Engine: <strong>Standby / Scanning Dips</strong></span>
+          </div>
+          <div class="action-btn-group">
+            <button id="btn-trigger-dip" class="btn btn-warning-glow">
+              ⚡ Trigger Flash Dip (-8.5% SOL)
+            </button>
+            <button id="btn-trigger-rebound" class="btn btn-success-glow" disabled>
+              📈 Trigger Rebound (+10.5% Exit)
+            </button>
+            <button id="btn-reset-market" class="btn btn-ghost">
+              ↺ Sync Mainnet
+            </button>
+          </div>
+        </div>
       </div>
 
-      <div class="tokens-grid" id="tokens-container">
-        <!-- SOL Token Card -->
-        <div class="token-card" id="token-card-sol">
-          <div class="token-top">
-            <div class="token-info">
+      <!-- Right Column: AI Cognitive Engine (Chain of Thought Stream) -->
+      <div class="panel-card cognition-panel">
+        <div class="panel-header">
+          <div class="panel-title-group">
+            <span class="panel-icon">🧠</span>
+            <h3>AI Cognitive Stream</h3>
+            <span class="badge badge-purple">REASONING CORE</span>
+          </div>
+          <span class="live-pulse-badge">LIVE COGNITION</span>
+        </div>
+
+        <!-- The Living Thought Stream -->
+        <div class="cognition-stream" id="cognition-stream">
+          <!-- Dynamically populated thoughts -->
+        </div>
+
+        <!-- Agent Status Footer -->
+        <div class="cognition-footer">
+          <div class="agent-avatar">🤖</div>
+          <div class="agent-meta">
+            <div class="agent-name">Agent Treasury Autonomous Executor</div>
+            <div class="agent-model">Strategy: Kamino Yield Vault + Jupiter Dip Frontrunner</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Secondary Row: Multi-Agent Fleet Registry & Live Token Matrix -->
+    <div class="secondary-grid">
+      <!-- Fleet Registry -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <div class="panel-title-group">
+            <span class="panel-icon">🌐</span>
+            <h3>Autonomous Fleet Treasury Registry</h3>
+          </div>
+          <span class="badge badge-mint">3 ACTIVE AGENTS</span>
+        </div>
+        <div class="table-responsive">
+          <table class="fleet-table">
+            <thead>
+              <tr>
+                <th>Agent Identifier</th>
+                <th>Role</th>
+                <th>Total Balance</th>
+                <th>Kamino Vaulted</th>
+                <th>Deployable Surplus</th>
+                <th>Operational Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong class="text-white">agent-alpha-scout</strong></td>
+                <td><span class="role-badge role-scout">Market Scout</span></td>
+                <td><span class="mono-num">$42.00 USDC</span></td>
+                <td><span class="mono-num text-purple">$30.00 USDC</span></td>
+                <td><span class="mono-num text-blue">$12.00 USDC</span></td>
+                <td><span class="badge badge-mint"><span class="pulse-dot-sm"></span> MONITORING</span></td>
+              </tr>
+              <tr>
+                <td><strong class="text-white">agent-beta-yield</strong></td>
+                <td><span class="role-badge role-farmer">Yield Farmer</span></td>
+                <td><span class="mono-num">$68.00 USDC</span></td>
+                <td><span class="mono-num text-purple">$50.00 USDC</span></td>
+                <td><span class="mono-num text-blue">$18.00 USDC</span></td>
+                <td><span class="badge badge-purple">COMPOUNDING</span></td>
+              </tr>
+              <tr>
+                <td><strong class="text-white">agent-gamma-worker</strong></td>
+                <td><span class="role-badge role-worker">Task Worker</span></td>
+                <td><span class="mono-num">$35.00 USDC</span></td>
+                <td><span class="mono-num text-purple">$25.00 USDC</span></td>
+                <td><span class="mono-num text-blue">$10.00 USDC</span></td>
+                <td><span class="badge badge-blue">STANDBY</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Live Token Scanner Cards -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <div class="panel-title-group">
+            <span class="panel-icon">📡</span>
+            <h3>Jupiter Whitelisted Dip Matrix</h3>
+          </div>
+          <span class="text-dim text-xs" id="sync-time-label">Synced via DEXScreener</span>
+        </div>
+        <div class="tokens-matrix-grid">
+          <!-- Token SOL -->
+          <div class="matrix-token-box" id="card-sol">
+            <div class="matrix-top">
               <span class="token-symbol">SOL</span>
-              <span class="token-name">Solana</span>
+              <span class="matrix-price" id="m-price-sol">$119.50</span>
             </div>
-            <span class="token-price" id="price-sol">Loading...</span>
-          </div>
-          <div class="token-stats">
-            <div class="stat-item">
-              <span class="stat-label">24h Change:</span>
-              <span class="stat-val" id="change-sol">--%</span>
+            <div class="matrix-mid">
+              <span>24h: <strong id="m-change-sol" class="text-green">+0.85%</strong></span>
+              <span>RSI: <strong id="m-rsi-sol">48.2</strong></span>
             </div>
-            <div class="stat-item">
-              <span class="stat-label">RSI (14):</span>
-              <span class="stat-val" id="rsi-sol">--</span>
-            </div>
+            <div class="matrix-badge status-monitoring" id="m-badge-sol">MONITORING</div>
           </div>
-          <div class="token-status-badge status-monitoring" id="badge-sol">
-            MONITORING
-          </div>
-        </div>
 
-        <!-- JUP Token Card -->
-        <div class="token-card" id="token-card-jup">
-          <div class="token-top">
-            <div class="token-info">
+          <!-- Token JUP -->
+          <div class="matrix-token-box" id="card-jup">
+            <div class="matrix-top">
               <span class="token-symbol">JUP</span>
-              <span class="token-name">Jupiter</span>
+              <span class="matrix-price" id="m-price-jup">$0.33</span>
             </div>
-            <span class="token-price" id="price-jup">Loading...</span>
-          </div>
-          <div class="token-stats">
-            <div class="stat-item">
-              <span class="stat-label">24h Change:</span>
-              <span class="stat-val" id="change-jup">--%</span>
+            <div class="matrix-mid">
+              <span>24h: <strong id="m-change-jup" class="text-green">+2.10%</strong></span>
+              <span>RSI: <strong id="m-rsi-jup">52.4</strong></span>
             </div>
-            <div class="stat-item">
-              <span class="stat-label">RSI (14):</span>
-              <span class="stat-val" id="rsi-jup">--</span>
-            </div>
+            <div class="matrix-badge status-monitoring" id="m-badge-jup">MONITORING</div>
           </div>
-          <div class="token-status-badge status-monitoring" id="badge-jup">
-            MONITORING
-          </div>
-        </div>
 
-        <!-- JTO Token Card -->
-        <div class="token-card" id="token-card-jto">
-          <div class="token-top">
-            <div class="token-info">
+          <!-- Token JTO -->
+          <div class="matrix-token-box" id="card-jto">
+            <div class="matrix-top">
               <span class="token-symbol">JTO</span>
-              <span class="token-name">Jito</span>
+              <span class="matrix-price" id="m-price-jto">$0.54</span>
             </div>
-            <span class="token-price" id="price-jto">Loading...</span>
-          </div>
-          <div class="token-stats">
-            <div class="stat-item">
-              <span class="stat-label">24h Change:</span>
-              <span class="stat-val" id="change-jto">--%</span>
+            <div class="matrix-mid">
+              <span>24h: <strong id="m-change-jto" class="text-red">-1.20%</strong></span>
+              <span>RSI: <strong id="m-rsi-jto">44.1</strong></span>
             </div>
-            <div class="stat-item">
-              <span class="stat-label">RSI (14):</span>
-              <span class="stat-val" id="rsi-jto">--</span>
-            </div>
-          </div>
-          <div class="token-status-badge status-monitoring" id="badge-jto">
-            MONITORING
+            <div class="matrix-badge status-monitoring" id="m-badge-jto">MONITORING</div>
           </div>
         </div>
       </div>
-    </section>
+    </div>
 
-    <!-- Interactive Execution Simulation -->
-    <section class="simulation-section">
-      <div class="sim-header">
-        <div class="sim-title">
-          <span class="section-icon">🕹️</span>
-          <h3>Interactive Agent Execution Terminal</h3>
-        </div>
-        <div class="sim-controls">
-          <button id="btn-simulate-dip" class="btn btn-warning">
-            ⚡ Trigger Flash Dip (-8.5% SOL)
-          </button>
-          <button id="btn-simulate-rebound" class="btn btn-success" disabled>
-            📈 Trigger Rebound (+10.5% Exit)
-          </button>
-          <button id="btn-reset" class="btn btn-secondary">
-            ↺ Reset Market
-          </button>
+    <!-- Active Spot Position & Order Execution Stream -->
+    <div class="panel-card position-panel">
+      <div class="panel-header">
+        <div class="panel-title-group">
+          <span class="panel-icon">💼</span>
+          <h3>Active Spot Position &amp; Trailing PnL Monitor</h3>
         </div>
       </div>
-
-      <!-- Terminal Output Window -->
-      <div class="terminal-window">
-        <div class="terminal-bar">
-          <div class="mac-buttons">
-            <span class="mac-btn red"></span>
-            <span class="mac-btn yellow"></span>
-            <span class="mac-btn green"></span>
-          </div>
-          <span class="terminal-title">solana-agent-treasury: runtime event stream</span>
-        </div>
-        <div class="terminal-content" id="terminal-logs">
-          <div class="log-line text-muted">[System] Solana Agent Treasury runtime initialized.</div>
-          <div class="log-line text-purple">[KaminoVault] Locked $30.00 USDC in Kamino Lending Reserve. Accruing 8.42% APY.</div>
-          <div class="log-line text-green">[CapitalGuard] Operational Invariant validated: ReserveFloor = $30.00 USDC.</div>
-          <div class="log-line text-blue">[Scanner] Polling Jupiter DEX liquidity across SOL, JUP, JTO... All stable.</div>
-          <div class="log-line text-dim">&gt; Click "Trigger Flash Dip" above to simulate an oversold market event.</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Active Positions Section -->
-    <section class="positions-section">
-      <div class="section-header">
-        <div class="section-title-wrap">
-          <span class="section-icon">💼</span>
-          <h3>Treasury Spot Positions &amp; PnL Tracker</h3>
-        </div>
-      </div>
-      <div class="positions-table-wrap">
-        <table class="positions-table">
+      <div class="table-responsive">
+        <table class="fleet-table">
           <thead>
             <tr>
-              <th>ID</th>
+              <th>Position ID</th>
               <th>Asset</th>
               <th>Entry Price</th>
               <th>Current Price</th>
-              <th>Allocated</th>
+              <th>Allocated USDC</th>
               <th>PnL (%)</th>
               <th>PnL (USDC)</th>
+              <th>Peak Price</th>
               <th>Status</th>
-              <th>Action Trigger</th>
+              <th>Active Trigger</th>
             </tr>
           </thead>
-          <tbody id="positions-tbody">
-            <tr id="no-positions-row">
-              <td colspan="9" class="text-center text-muted">No active spot positions. Capital safely held in Kamino Yield Vault.</td>
+          <tbody id="live-positions-tbody">
+            <tr id="empty-pos-row">
+              <td colspan="10" class="text-center text-dim py-6">
+                No active spot positions. Capital securely vaulted in Kamino Lending Reserve.
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
-    </section>
-
-    <!-- SDK Integration Example -->
-    <section class="code-section">
-      <div class="section-header">
-        <div class="section-title-wrap">
-          <span class="section-icon">💻</span>
-          <h3>Integrate into Any Solana AI Agent</h3>
-        </div>
-      </div>
-      <div class="code-block-wrap">
-        <pre><code><span class="kw">import</span> { <span class="cls">SolanaAgentTreasury</span> } <span class="kw">from</span> <span class="str">'solana-agent-treasury'</span>;
-
-<span class="com">// 1. Initialize Treasury with a $30.00 safety reserve</span>
-<span class="kw">const</span> treasury = <span class="kw">new</span> <span class="cls">SolanaAgentTreasury</span>({
-  reserveFloorUsdc: <span class="num">30.00</span>,
-});
-
-<span class="com">// 2. Automatically vault operating reserve into Kamino Lending</span>
-<span class="kw">const</span> status = treasury.<span class="fn">getReserveStatus</span>();
-console.<span class="fn">log</span>(<span class="str">`Kamino APY: ${status.currentApy}% | Deposited: $${status.depositedUsdc}`</span>);
-
-<span class="com">// 3. Scan &amp; trade dips on Jupiter with Capital Guard protection</span>
-<span class="kw">const</span> signal = treasury.<span class="fn">evaluateDip</span>(<span class="str">'SOL'</span>, mintAddress, currentPrice, rsi, change24h, walletBalance);
-<span class="kw">if</span> (signal.shouldBuy) {
-  <span class="kw">const</span> position = treasury.<span class="fn">executeDipTrade</span>(signal);
-  console.<span class="fn">log</span>(<span class="str">`Bought ${position.amount} SOL at $${position.entryPrice}`</span>);
-}</code></pre>
-      </div>
-    </section>
+    </div>
 
     <!-- Footer -->
     <footer class="app-footer">
-      <div>
-        Built with MIT License for <strong>Road to Colosseum Hackathon (Superteam Germany)</strong>.
+      <div class="footer-left">
+        <strong>Solana Agent Treasury</strong> — Open Source Autonomous Liquidity Engine (MIT License). Built for <strong>Road to Colosseum Hackathon (Superteam Germany)</strong>.
       </div>
-      <div>
+      <div class="footer-right">
         <a href="https://github.com/sportsalbe/solana-agent-treasury" target="_blank">github.com/sportsalbe/solana-agent-treasury</a>
       </div>
     </footer>
   </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
 
   <script src="app.js"></script>
 </body>
