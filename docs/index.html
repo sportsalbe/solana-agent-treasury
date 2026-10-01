@@ -351,6 +351,45 @@
     </footer>
   </div>
 
+    <!-- Wallet Connection Modal -->
+  <div id="wallet-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Connect Solana Wallet</h3>
+        <button id="modal-close-btn" class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="text-secondary text-sm mb-4" style="color:#94A3B8; font-size:13px; margin-bottom:14px;">Select how you want to connect to the Treasury Terminal:</p>
+        
+        <button id="modal-btn-phantom" class="wallet-option-btn">
+          <div class="wallet-opt-left">
+            <span class="wallet-opt-icon">👻</span>
+            <div>
+              <div class="wallet-opt-title">Phantom Wallet</div>
+              <div class="wallet-opt-sub">Browser Extension (Auto-detect)</div>
+            </div>
+          </div>
+          <span class="badge badge-mint" id="phantom-detect-badge">DETECT</span>
+        </button>
+
+        <button id="modal-btn-creator" class="wallet-option-btn">
+          <div class="wallet-opt-left">
+            <span class="wallet-opt-icon">👑</span>
+            <div>
+              <div class="wallet-opt-title">Use Verified Creator Wallet</div>
+              <div class="wallet-opt-sub mono-num">9BNq3m8V...VUq79CJ</div>
+            </div>
+          </div>
+          <span class="badge badge-purple">INSTANT</span>
+        </button>
+
+        <div class="custom-wallet-input-wrap">
+          <input type="text" id="custom-wallet-input" placeholder="Or paste any Solana address..." class="custom-wallet-input">
+          <button id="custom-wallet-submit" class="btn btn-secondary btn-sm">Connect</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <!-- Toast Notification Container -->
   <div id="toast-container" class="toast-container"></div>
 

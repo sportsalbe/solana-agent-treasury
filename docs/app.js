@@ -381,28 +381,131 @@ document.getElementById('agent-balance-slider').addEventListener('input', (e) =>
   updateUI();
 });
 
-// 12. Connect Phantom Wallet Real Web3 Handler
-document.getElementById('btn-connect-wallet').addEventListener('click', async () => {
-  const btnText = document.getElementById('wallet-btn-text');
-  if (window.solana && window.solana.isPhantom) {
-    try {
-      btnText.innerText = 'Connecting...';
-      const resp = await window.solana.connect();
-      const pubkey = resp.publicKey.toString();
-      const shortAddr = pubkey.slice(0, 4) + '...' + pubkey.slice(-4);
-      btnText.innerText = shortAddr;
-      addCognitionThought('WEB3 WALLET', `Connected Phantom Wallet: ${pubkey}. Invariant active.`, 'guard');
-      showToast(`⚡ Phantom Connected: ${shortAddr}`);
-    } catch (err) {
-      console.warn('Wallet connection cancelled:', err);
-      btnText.innerText = 'Connect Phantom';
+// 12. Robust Multi-Wallet Connection System (Phantom Provider + Modal Fallback)
+function getSolanaProvider() {
+  if (typeof window !== 'undefined') {
+    if (window.phantom?.solana?.isPhantom) return window.phantom.solana;
+    if (window.solana?.isPhantom) return window.solana;
+    if (window.solflare?.isSolflare) return window.solflare;
+    if (window.backpack?.isBackpack) return window.backpack;
+    if (window.solana) return window.solana;
+  }
+  return null;
+}
+
+const modal = document.getElementById('wallet-modal');
+const modalClose = document.getElementById('modal-close-btn');
+const phantomDetectBadge = document.getElementById('phantom-detect-badge');
+
+function openWalletModal() {
+  if (!modal) return;
+  modal.style.display = 'flex';
+  const provider = getSolanaProvider();
+  if (provider) {
+    if (phantomDetectBadge) {
+      phantomDetectBadge.innerText = 'DETECTED';
+      phantomDetectBadge.className = 'badge badge-mint';
     }
   } else {
-    // If Phantom is not installed, open download link or notify
-    showToast('ℹ️ Phantom Wallet not detected in browser. Running in Full Interactive Demo Mode.');
-    btnText.innerText = 'Demo Active';
+    if (phantomDetectBadge) {
+      phantomDetectBadge.innerText = 'NOT INSTALLED';
+      phantomDetectBadge.className = 'badge badge-purple';
+    }
   }
+}
+
+function closeWalletModal() {
+  if (modal) modal.style.display = 'none';
+}
+
+if (modalClose) modalClose.addEventListener('click', closeWalletModal);
+if (modal) {
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeWalletModal();
+  });
+}
+
+document.getElementById('btn-connect-wallet').addEventListener('click', async () => {
+  const provider = getSolanaProvider();
+  if (provider) {
+    try {
+      showToast('Connecting to Solana Wallet...');
+      const resp = await provider.connect();
+      const pubkey = resp.publicKey.toString();
+      await handleWalletConnected(pubkey, 'Phantom Extension');
+      return;
+    } catch (err) {
+      console.warn('Direct connect rejected, opening modal:', err);
+    }
+  }
+  openWalletModal();
 });
+
+const modalBtnPhantom = document.getElementById('modal-btn-phantom');
+if (modalBtnPhantom) {
+  modalBtnPhantom.addEventListener('click', async () => {
+    const provider = getSolanaProvider();
+    if (provider) {
+      try {
+        const resp = await provider.connect();
+        const pubkey = resp.publicKey.toString();
+        await handleWalletConnected(pubkey, 'Phantom Extension');
+        closeWalletModal();
+      } catch (err) {
+        showToast('⚠️ Connection rejected in Phantom popup');
+      }
+    } else {
+      window.open('https://phantom.app/', '_blank');
+      showToast('Opening phantom.app installation page in new tab...');
+    }
+  });
+}
+
+const modalBtnCreator = document.getElementById('modal-btn-creator');
+if (modalBtnCreator) {
+  modalBtnCreator.addEventListener('click', async () => {
+    await handleWalletConnected('9BNq3m8VdURvMpwgW3zo9sd1UCgioqKB1mNBbVUq79CJ', 'Creator Verified Wallet');
+    closeWalletModal();
+  });
+}
+
+const customWalletSubmit = document.getElementById('custom-wallet-submit');
+if (customWalletSubmit) {
+  customWalletSubmit.addEventListener('click', async () => {
+    const val = document.getElementById('custom-wallet-input').value.trim();
+    if (val && val.length >= 32 && val.length <= 44) {
+      await handleWalletConnected(val, 'Custom Public Key');
+      closeWalletModal();
+    } else {
+      showToast('⚠️ Please enter a valid Solana Base58 address (32-44 characters)');
+    }
+  });
+}
+
+async function handleWalletConnected(address, source) {
+  STATE.connectedWallet = address;
+  const short = address.slice(0, 4) + '...' + address.slice(-4);
+  const btnText = document.getElementById('wallet-btn-text');
+  if (btnText) btnText.innerText = short;
+
+  addCognitionThought('WALLET LINKED', `Linked ${source}: ${address}. Assigned as Fleet Yield Beneficiary.`, 'guard');
+  showToast(`⚡ Connected: ${short} (${source})`);
+
+  // Query Real Solana Balance via public RPC
+  try {
+    if (typeof solanaWeb3 !== 'undefined') {
+      const connection = new solanaWeb3.Connection('https://api.mainnet-beta.solana.com', 'confirmed');
+      const pubkey = new solanaWeb3.PublicKey(address);
+      const lamports = await connection.getBalance(pubkey);
+      const sol = (lamports / 1e9).toFixed(3);
+      addCognitionThought('MAINNET BALANCE', `Verified On-Chain Balance for ${short}: ${sol} SOL.`, 'guard');
+      showToast(`💰 On-Chain Balance: ${sol} SOL`);
+    }
+  } catch (err) {
+    console.log('Mainnet balance RPC query note:', err.message);
+  }
+}
+
 
 // Continuous Yield Ticker
 setInterval(() => {
