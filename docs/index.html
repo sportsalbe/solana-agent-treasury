@@ -126,6 +126,50 @@
     </div>
 
     <!-- Center Stage: Chart & AI Cognition Engine -->
+    
+    <!-- Interactive Market & Capital Sandbox (The Hands-On Simulator) -->
+    <section class="sandbox-control-card">
+      <div class="sandbox-header">
+        <div class="sandbox-title-wrap">
+          <span class="sandbox-icon">🎛️</span>
+          <div>
+            <h3>Interactive Market &amp; Treasury Sandbox</h3>
+            <p>Drag the price slider to simulate crashes or rallies. Deposit demo funds to watch the autonomous agent react in real time.</p>
+          </div>
+        </div>
+        <!-- Capital Injection Buttons -->
+        <div class="capital-injector-group">
+          <button id="btn-deposit-50" class="btn btn-deposit-glow">
+            💰 + Deposit $50 Demo USDC
+          </button>
+          <button id="btn-empty-wallet" class="btn btn-ghost-sm">
+            ↺ Empty to $0
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Interactive Price Scrubber Slider -->
+      <div class="scrubber-container">
+        <div class="scrubber-top">
+          <span class="scrubber-label">SOL LIVE PRICE MANIPULATOR:</span>
+          <div class="scrubber-val-box">
+            <span class="scrubber-price" id="scrubber-price-text">$119.50</span>
+            <span class="scrubber-change" id="scrubber-change-text">(0.00%)</span>
+          </div>
+        </div>
+        <div class="slider-track-wrap">
+          <input type="range" id="price-scrubber" min="90" max="145" value="119.5" step="0.5" class="price-slider">
+          <div class="slider-markers">
+            <span class="marker text-red">💥 Deep Crash ($90)</span>
+            <span class="marker text-yellow">⚡ Dip Trigger (&lt;$110)</span>
+            <span class="marker text-dim">Baseline ($119.50)</span>
+            <span class="marker text-mint">🚀 Take-Profit (&gt;$125)</span>
+            <span class="marker text-green">🌕 Moon ($145)</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <div class="main-dashboard-grid">
       <!-- Left Column: Live Visual Trading Terminal -->
       <div class="panel-card chart-panel">
